@@ -1,5 +1,12 @@
 ***INSPECTOR-IMAGE***
 
+**USAGE**
+
+```sh
+cargo run -- map mon_image.jpg
+cargo run -- steg mon_image.jpg
+```
+
 Objective
 
 Discover a new method of passive analysis
