@@ -5,11 +5,9 @@ use image::{io::Reader as ImageReader, GenericImageView};
 pub struct LsbStego;
 
 impl Stego for LsbStego {
-    fn extract(path: &Path) -> Result<String, StegoError> {
-        let img = ImageReader::open(path)
-            .map_err(|e| StegoError::ImageError(e.to_string()))?
-            .decode()
-            .map_err(|e| StegoError::ImageError(e.to_string()))?;
+    fn extract(&self, path: &Path) -> Result<String, StegoError> {
+        // Ouvre et décode l'image (propage un `StegoError::ImageError` si échec)
+        let img = ImageReader::open(path)?.decode()?;
 
         let (w, h) = img.dimensions();
         let mut bits = Vec::new();
@@ -27,8 +25,8 @@ impl Stego for LsbStego {
             .map(|chunk| chunk.iter().fold(0, |acc, &b| (acc << 1) | b))
             .collect();
 
-        let text = String::from_utf8(bytes)
-            .map_err(|e| StegoError::Utf8Error(e.to_string()))?;
+        // Conversion en texte UTF-8 (propage `StegoError::Utf8Error` si échec)
+        let text = String::from_utf8(bytes)?;
 
         if text.contains("-----BEGIN PGP PUBLIC KEY BLOCK-----") {
             Ok(text)
