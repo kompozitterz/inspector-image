@@ -7,7 +7,7 @@ pub struct LsbStego;
 impl Stego for LsbStego {
     fn extract(path: &Path) -> Result<String, StegoError> {
         let img = ImageReader::open(path)
-            .map_err(|e| StegoErro::ImageError(e.to_string()))?
+            .map_err(|e| StegoError::ImageError(e.to_string()))?
             .decode()
             .map_err(|e| StegoError::ImageError(e.to_string()))?;
 
@@ -21,14 +21,16 @@ impl Stego for LsbStego {
                 bits.push(lsb);
             }
         }
-        let bytes: Vec<u8> = bits.chunks(8)
-            .map (|chunk| chunk.iter().fold(0, |acc, &b| (acc >>1) | b))
+
+        let bytes: Vec<u8> = bits
+            .chunks(8)
+            .map(|chunk| chunk.iter().fold(0, |acc, &b| (acc << 1) | b))
             .collect();
 
         let text = String::from_utf8(bytes)
             .map_err(|e| StegoError::Utf8Error(e.to_string()))?;
 
-        if text.contains("----BEGIN PGP PUBLIC KEY BLOCK----") {
+        if text.contains("-----BEGIN PGP PUBLIC KEY BLOCK-----") {
             Ok(text)
         } else {
             Err(StegoError::PgpNotFound)

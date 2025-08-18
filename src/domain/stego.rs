@@ -1,4 +1,4 @@
-use std::path::Paht;
+use std::path::Path;
 
 #[derive(Debug)]
 pub enum StegoError {
@@ -8,5 +8,5 @@ pub enum StegoError {
 }
 
 pub trait Stego {
-    fn extract(path: &Path) -> Option<String, StegoError>;
+    fn extract(path: &Path) -> Result<String, StegoError>;
 }
