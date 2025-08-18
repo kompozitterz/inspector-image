@@ -9,3 +9,8 @@ image = "0.24"
 rexiv2 = "0.10"
 thiserror = "2.0.15"
 
+[[bin]]
+name = "embed"
+path = "src/embed.rs"
+
+

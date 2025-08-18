@@ -2,6 +2,7 @@ mod applications;
 mod cli;
 mod domain;
 mod infrastructure;
+mod embed;
 
 use crate::cli::commands::{Cli, Commands};
 use crate::applications::{map_exif, steg_extract};

@@ -1,17 +1,20 @@
+use std::io;
+use std::string::FromUtf8Error;
 use thiserror::Error;
+use image::ImageError;
 
 #[derive(Debug, Error)]
 pub enum StegoError {
-    #[error("Image error: {0}")]
-    ImageError(#[from] image::ImageError),
+    #[error("Erreur I/O: {0}")]
+    IoError(#[from] io::Error), // <-- pour ImageReader::open()
 
-    #[error("UTF-8 error: {0}")]
-    Utf8Error(#[from] std::string::FromUtf8Error),
+    #[error("Erreur image: {0}")]
+    ImageError(#[from] ImageError), // <-- pour decode()
 
-    #[error("IO error: {0}")]
-    IoError(#[from] std::io::Error),
+    #[error("Erreur UTF-8: {0}")]
+    Utf8Error(#[from] FromUtf8Error), // <-- pour String::from_utf8()
 
-    #[error("PGP block not found")]
+    #[error("Bloc PGP non trouvé")]
     PgpNotFound,
 }
 
