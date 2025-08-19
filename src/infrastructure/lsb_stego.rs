@@ -15,22 +15,29 @@ impl Stego for LsbStego {
         for y in 0..h {
             for x in 0..w {
                 let pixel = img.get_pixel(x, y);
-                let lsb = pixel[0] & 1;
-                bits.push(lsb);
 
-                // Quand on a 8 bits → on fabrique un byte
-                if bits.len() == 8 {
-                    let byte = bits.iter().fold(0, |acc, &b| (acc << 1) | b);
-                    message.push(byte);
-                    bits.clear();
+                // 🔥 lire les 3 canaux (R, G, B)
+                for c in 0..3 {
+                    let lsb = pixel[c] & 1;
+                    bits.push(lsb);
 
-                    // Vérifier si on a atteint le marqueur "<END>"
-                    if message.ends_with(b"<END>") {
-                        let text = String::from_utf8_lossy(&message[..message.len() - 5]).to_string();
-                        if text.contains("-----BEGIN PGP PUBLIC KEY BLOCK-----") {
-                            return Ok(text);
-                        } else {
-                            return Err(StegoError::PgpNotFound);
+                    // Quand on a 8 bits → on fabrique un byte
+                    if bits.len() == 8 {
+                        let byte = bits.iter().fold(0, |acc, &b| (acc << 1) | b);
+                        message.push(byte);
+                        bits.clear();
+
+                        // Vérifier si on a atteint le marqueur "<END>"
+                        if message.ends_with(b"<END>") {
+                            let text = String::from_utf8_lossy(
+                                &message[..message.len() - 5]
+                            ).to_string();
+
+                            if text.contains("-----BEGIN PGP PUBLIC KEY BLOCK-----") {
+                                return Ok(text);
+                            } else {
+                                return Err(StegoError::PgpNotFound);
+                            }
                         }
                     }
                 }
