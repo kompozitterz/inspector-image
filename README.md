@@ -1,5 +1,21 @@
 ***INSPECTOR-IMAGE***
 
+**AUDIT**   
+
+Write GPS coordinates in a photo:
+```sh
+exiftool -GPSLatitude=48.8566 -GPSLongitude=2.3522 -GPSLatitudeRef=N -GPSLongitudeRef=E input.jpg -o with_gps.jpg
+```
+
+--map:
+```sh
+cargo run --bin inspector_image -- map with_gps.jpg```
+
+--steg:
+```sh
+cargo run --bin inspector_image -- steg with_pgp.png
+```
+
 **USAGE**
 
 ```sh
